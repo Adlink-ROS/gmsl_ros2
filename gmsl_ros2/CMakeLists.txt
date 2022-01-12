@@ -142,7 +142,7 @@ if(BUILD_TESTING)
   ament_add_gtest(
     smoke_test
     test/smoke_test.cpp
-    ENV GSCAM_CONFIG="videotestsrc pattern=snow ! capsfilter caps=video/x-raw,width=800,height=600 ! videoconvert"
+    ENV GSCAM_CONFIG="v4l2src device=/dev/video0 ! videoscale ! video/x-raw,width=800,height=600 ! videoconvert"
   )
   if(TARGET smoke_test)
     target_link_libraries(smoke_test gscam_node)

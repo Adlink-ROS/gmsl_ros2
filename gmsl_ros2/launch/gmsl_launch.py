@@ -9,23 +9,27 @@ from launch.conditions import IfCondition
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 
-# Set parameters
-namespace = 'camera'
-frame_id = 'gmsl_camera_frame'
-camera_name = 'gmsl_camera'
-camera_config = 'file://' + os.path.join(get_package_share_directory('gscam2'), 'cfg', 'calibration_param_example.yaml')
-
 def generate_launch_description():
 
+    # Set parameters
+    namespace = LaunchConfiguration('namespace', default='camera')
+    node_name = LaunchConfiguration('node_name', default='gmsl_camera_node')
+    frame_id = LaunchConfiguration('frame_id', default='gmsl_camera_frame')
+    camera_name = LaunchConfiguration('camera_name', default='gmsl_camera')
+    camera_config = LaunchConfiguration('camera_config', default='file://' + os.path.join(get_package_share_directory('gscam2'), 'cfg', 'calibration_param_example.yaml'))
+    camera_dev = LaunchConfiguration('camera_dev', default='/dev/video0')
+
+    # Camera node
     camera_node = Node(
         package='gscam2',
         executable='gscam_main',
         output='screen',
-        name='gscam_publisher',
+        name=node_name,
         namespace=namespace,
         parameters=[
                     {
-                        'gscam_config': 'v4l2src device=/dev/video0 ! videoconvert',
+                        # 'gscam_config': 'v4l2src device=' + camera_dev + ' ! videoconvert',
+                        'gscam_config': (['v4l2src device=', camera_dev, ' ! videoconvert']),
                         'preroll': False,
                         'use_gst_timestamps': False,
                         'frame_id': frame_id,
@@ -33,24 +37,24 @@ def generate_launch_description():
                         'camera_info_url': camera_config,  # Camera calibration information
                     },
         ],
-        # Remap outputs to the correct namespace
-        remappings=[
-            ('/image_raw', '/' + namespace + '/image_raw'),
-            ('/camera_info', '/' + namespace + '/camera_info'),
-        ],
     )
 
     # TF publisher
+    tf_arg = DeclareLaunchArgument(
+            'publish_tf',
+            default_value='true',
+            description='Publish TF?')
     tf_pub_node = Node(package = "tf2_ros",
                 executable = "static_transform_publisher",
-                arguments = ["0", "0", "0.3", "0", "0", "0", "map", frame_id])
+                arguments = ["0", "0", "0.3", "0", "0", "0", "map", frame_id],
+                condition=IfCondition(LaunchConfiguration("publish_tf"))
+                )
 
     # Rviz2
     rviz_arg = DeclareLaunchArgument(
             'open_rviz',
             default_value='false',
             description='Launch Rviz?')
-
     rviz_node = Node(
             package='rviz2',
             executable='rviz2',
@@ -59,4 +63,4 @@ def generate_launch_description():
             condition=IfCondition(LaunchConfiguration("open_rviz"))
             )
 
-    return LaunchDescription([camera_node, tf_pub_node, rviz_arg, rviz_node])
+    return LaunchDescription([camera_node, tf_arg, tf_pub_node, rviz_arg, rviz_node])

@@ -3,13 +3,13 @@
 <package format="3">
 
     <name>gscam2</name>
-    <version>0.0.1</version>
+    <version>0.1.0</version>
     <description>
-        ROS2 camera driver built around the GStreamer pipeline
+        ROS 2 GMSL camera wrapper built around the GStreamer pipeline
         Port of https://github.com/ros-drivers/gscam
     </description>
 
-    <maintainer email="clyde@mcqueen.net">Clyde McQueen (ROS2)</maintainer>
+    <maintainer email="ting.chang@adlinktech.com">Ting Chang</maintainer>
     <license>BSD</license>
 
     <url type="repository">https://github.com/clydemcqueen/gscam2.git</url>
@@ -34,7 +34,7 @@
     -->
 
     <test_depend>ament_cmake_cppcheck</test_depend>
-    <test_depend>ament_cmake_flake8</test_depend>
+    <!-- <test_depend>ament_cmake_flake8</test_depend> -->
     <test_depend>ament_cmake_lint_cmake</test_depend>
     <test_depend>ament_cmake_pep257</test_depend>
     <test_depend>ament_cmake_uncrustify</test_depend>
