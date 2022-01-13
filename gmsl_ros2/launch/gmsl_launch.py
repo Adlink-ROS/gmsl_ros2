@@ -16,20 +16,19 @@ def generate_launch_description():
     node_name = LaunchConfiguration('node_name', default='gmsl_camera_node')
     frame_id = LaunchConfiguration('frame_id', default='gmsl_camera_frame')
     camera_name = LaunchConfiguration('camera_name', default='gmsl_camera')
-    camera_config = LaunchConfiguration('camera_config', default='file://' + os.path.join(get_package_share_directory('gscam2'), 'cfg', 'calibration_param_example.yaml'))
+    camera_config = LaunchConfiguration('camera_config', default='file://' + os.path.join(get_package_share_directory('gmsl_ros2'), 'cfg', 'calibration_param_example.yaml'))
     camera_dev = LaunchConfiguration('camera_dev', default='/dev/video0')
 
     # Camera node
     camera_node = Node(
-        package='gscam2',
-        executable='gscam_main',
+        package='gmsl_ros2',
+        executable='gmsl_main',
         output='screen',
         name=node_name,
         namespace=namespace,
         parameters=[
                     {
-                        # 'gscam_config': 'v4l2src device=' + camera_dev + ' ! videoconvert',
-                        'gscam_config': (['v4l2src device=', camera_dev, ' ! videoconvert']),
+                        'gst_config': (['v4l2src device=', camera_dev, ' ! videoconvert']),
                         'preroll': False,
                         'use_gst_timestamps': False,
                         'frame_id': frame_id,
@@ -59,7 +58,7 @@ def generate_launch_description():
             package='rviz2',
             executable='rviz2',
             name='rviz2',
-            arguments=['-d', os.path.join(get_package_share_directory('gscam2'), 'rviz', 'image_view.rviz')],
+            arguments=['-d', os.path.join(get_package_share_directory('gmsl_ros2'), 'rviz', 'image_view.rviz')],
             condition=IfCondition(LaunchConfiguration("open_rviz"))
             )
 

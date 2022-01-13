@@ -19,7 +19,7 @@ namespace gscam2
 //=============================================================================
 
 #define GSCAM_ALL_PARAMS \
-  CXT_MACRO_MEMBER(gscam_config, std::string, "")           /* Stream config  */ \
+  CXT_MACRO_MEMBER(gst_config, std::string, "")           /* Stream config  */ \
   CXT_MACRO_MEMBER(sync_sink, bool, true)                   /* Sync to the clock  */ \
   CXT_MACRO_MEMBER(preroll, bool, false)                    /* Pre-fill buffers  */ \
   CXT_MACRO_MEMBER(use_gst_timestamps, bool, false)         /* Use gst time instead of ROS time  */ \
@@ -129,7 +129,7 @@ bool GSCamNode::impl::create_pipeline()
   RCLCPP_INFO(node_->get_logger(), "Gstreamer version: %s", gst_version_string());
 
   GError * error = nullptr;
-  pipeline_ = gst_parse_launch(cxt_.gscam_config_.c_str(), &error);
+  pipeline_ = gst_parse_launch(cxt_.gst_config_.c_str(), &error);
   if (!pipeline_) {
     RCLCPP_FATAL(node_->get_logger(), error->message);
     return false;
@@ -211,7 +211,7 @@ bool GSCamNode::impl::create_pipeline()
   gst_element_set_state(pipeline_, GST_STATE_PAUSED);
 
   if (gst_element_get_state(pipeline_, nullptr, nullptr, -1) == GST_STATE_CHANGE_FAILURE) {
-    RCLCPP_FATAL(node_->get_logger(), "Failed to pause stream, check gscam_config");
+    RCLCPP_FATAL(node_->get_logger(), "Failed to pause stream, check gst_config");
     return false;
   } else {
     RCLCPP_INFO(node_->get_logger(), "Stream is paused");
@@ -392,16 +392,16 @@ void GSCamNode::impl::restart()
     delete_pipeline();
   }
 
-  // If gscam_config is empty look for GSCAM_CONFIG in the environment
-  if (cxt_.gscam_config_.empty()) {
-    auto gsconfig_env = getenv("GSCAM_CONFIG");
+  // If gst_config is empty look for GST_CONFIG in the environment
+  if (cxt_.gst_config_.empty()) {
+    auto gsconfig_env = getenv("GST_CONFIG");
     if (gsconfig_env) {
-      RCLCPP_INFO(node_->get_logger(), "Using GSCAM_CONFIG env var: %s", gsconfig_env);
-      cxt_.gscam_config_ = gsconfig_env;
+      RCLCPP_INFO(node_->get_logger(), "Using GST_CONFIG env var: %s", gsconfig_env);
+      cxt_.gst_config_ = gsconfig_env;
     } else {
       RCLCPP_FATAL(
         node_->get_logger(),
-        "GSCAM_CONFIG env var and gscam_config param are both missing, can't start stream");
+        "GST_CONFIG env var and gst_config param are both missing, can't start stream");
       return;
     }
   }

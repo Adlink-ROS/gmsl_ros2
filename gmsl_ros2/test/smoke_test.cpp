@@ -11,7 +11,7 @@
 using namespace std::chrono_literals;
 
 // Launch a test GStreamer pipeline and verify that at least 1 image was published
-// See GSCAM_CONFIG in CMakeLists.txt
+// See GST_CONFIG in CMakeLists.txt
 TEST(SmokeTest, smoke_test)  // NOLINT
 {
   const size_t max_loops = 200;
@@ -33,7 +33,7 @@ TEST(SmokeTest, smoke_test)  // NOLINT
     topic, 10,
     [&](const sensor_msgs::msg::Image::ConstSharedPtr image)  // NOLINT
     {
-      // Match GSCAM_CONFIG and param defaults
+      // Match GST_CONFIG and param defaults
       EXPECT_EQ(image->header.frame_id, "camera_frame");
       EXPECT_EQ(image->width, 800u);
       EXPECT_EQ(image->height, 600u);

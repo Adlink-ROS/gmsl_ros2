@@ -27,32 +27,32 @@ def generate_launch_description():
         target_container='camera_container',
         composable_node_descriptions = [
             ComposableNode(
-                package='gscam2',
+                package='gmsl_ros2',
                 plugin='gscam2::GSCamNode',
                 namespace='camera1',
                 parameters=[{
-                    'gscam_config': 'v4l2src device=/dev/video0 ! videoconvert',
+                    'gst_config': 'v4l2src device=/dev/video0 ! videoconvert',
                     'preroll': False,
                     'use_gst_timestamps': False,
                     'frame_id': 'gmsl_camera_frame1',
                     'camera_name': 'gmsl_camera1',
-                    'camera_info_url': 'file://' + os.path.join(get_package_share_directory('gscam2'), 'cfg', 'calibration_param_example.yaml'),  # Camera calibration information
+                    'camera_info_url': 'file://' + os.path.join(get_package_share_directory('gmsl_ros2'), 'cfg', 'calibration_param_example.yaml'),  # Camera calibration information
                 }],
                 extra_arguments=[{
                     'use_intra_process_comms': True,
                 }],
             ),
             ComposableNode(
-                package='gscam2',
+                package='gmsl_ros2',
                 plugin='gscam2::GSCamNode',
                 namespace='camera2',
                 parameters=[{
-                    'gscam_config': 'v4l2src device=/dev/video2 ! videoconvert',
+                    'gst_config': 'v4l2src device=/dev/video2 ! videoconvert',
                     'preroll': False,
                     'use_gst_timestamps': False,
                     'frame_id': 'gmsl_camera_frame2',
                     'camera_name': 'gmsl_camera2',
-                    'camera_info_url': 'file://' + os.path.join(get_package_share_directory('gscam2'), 'cfg', 'calibration_param_example.yaml'),  # Camera calibration information
+                    'camera_info_url': 'file://' + os.path.join(get_package_share_directory('gmsl_ros2'), 'cfg', 'calibration_param_example.yaml'),  # Camera calibration information
                 }],
                 extra_arguments=[{
                     'use_intra_process_comms': True,
@@ -116,7 +116,7 @@ def generate_launch_description():
         package='rviz2',
         executable='rviz2',
         name='rviz2',
-        arguments=['-d', os.path.join(get_package_share_directory('gscam2'), 'rviz', 'multi_camera.rviz')],
+        arguments=['-d', os.path.join(get_package_share_directory('gmsl_ros2'), 'rviz', 'multi_camera.rviz')],
         condition=IfCondition(LaunchConfiguration("open_rviz"))
     )
 

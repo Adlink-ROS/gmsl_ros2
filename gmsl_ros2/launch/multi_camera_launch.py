@@ -23,7 +23,7 @@ def generate_launch_description():
             package='rviz2',
             executable='rviz2',
             name='rviz2',
-            arguments=['-d', os.path.join(get_package_share_directory('gscam2'), 'rviz', 'multi_camera.rviz')],
+            arguments=['-d', os.path.join(get_package_share_directory('gmsl_ros2'), 'rviz', 'multi_camera.rviz')],
             condition=IfCondition(LaunchConfiguration("open_rviz"))
             )
 
@@ -37,7 +37,7 @@ def generate_launch_description():
                 'node_name': 'gmsl_camera_node1',
                 'frame_id' :'gmsl_camera_frame1',
                 'camera_name' : 'gmsl_camera1',
-                'camera_config' : 'file://' + os.path.join(get_package_share_directory('gscam2'), 'cfg', 'calibration_param_example.yaml'),
+                'camera_config' : 'file://' + os.path.join(get_package_share_directory('gmsl_ros2'), 'cfg', 'calibration_param_example.yaml'),
                 'camera_dev' : '/dev/video0',
                 'open_rviz' : 'false',
                 'publish_tf': 'false',
@@ -51,7 +51,7 @@ def generate_launch_description():
                 'node_name': 'gmsl_camera_node2',
                 'frame_id' :'gmsl_camera_frame2',
                 'camera_name' : 'gmsl_camera2',
-                'camera_config' : 'file://' + os.path.join(get_package_share_directory('gscam2'), 'cfg', 'calibration_param_example.yaml'),
+                'camera_config' : 'file://' + os.path.join(get_package_share_directory('gmsl_ros2'), 'cfg', 'calibration_param_example.yaml'),
                 'camera_dev' : '/dev/video2',
                 'open_rviz' : 'false',
                 'publish_tf': 'false',

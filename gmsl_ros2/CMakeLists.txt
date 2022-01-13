@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(gscam2)
+project(gmsl_ros2)
 
 # Default to C99
 if(NOT CMAKE_C_STANDARD)
@@ -47,13 +47,13 @@ include_directories(include)
 set(node_plugins "")
 
 #=============
-# GSCam node
+# GMSL node
 #=============
 
-set(GSCAM_NODE_SOURCES
+set(GMSL_NODE_SOURCES
   src/gscam_node.cpp)
 
-set(GSCAM_NODE_DEPS
+set(GMSL_NODE_DEPS
   camera_calibration_parsers
   camera_info_manager
   class_loader
@@ -63,17 +63,17 @@ set(GSCAM_NODE_DEPS
   ros2_shared
   sensor_msgs)
 
-add_library(gscam_node SHARED
-  ${GSCAM_NODE_SOURCES})
+add_library(gmsl_node SHARED
+  ${GMSL_NODE_SOURCES})
 
-target_compile_definitions(gscam_node
+target_compile_definitions(gmsl_node
   PRIVATE "COMPOSITION_BUILDING_DLL")
 
-ament_target_dependencies(gscam_node
-  ${GSCAM_NODE_DEPS})
+ament_target_dependencies(gmsl_node
+  ${GMSL_NODE_DEPS})
 
-rclcpp_components_register_nodes(gscam_node "gscam2::GSCamNode")
-set(node_plugins "${node_plugins}gscam2::GSCamNode;$<TARGET_FILE:gscam_node>\n")
+rclcpp_components_register_nodes(gmsl_node "gscam2::GSCamNode")
+set(node_plugins "${node_plugins}gscam2::GSCamNode;$<TARGET_FILE:gmsl_node>\n")
 
 #=============
 # Test subscriber node
@@ -101,15 +101,15 @@ rclcpp_components_register_nodes(subscriber_node "gscam2::ImageSubscriberNode")
 set(node_plugins "${node_plugins}gscam2::ImageSubscriberNode;$<TARGET_FILE:subscriber_node>\n")
 
 #=============
-# GSCam main, statically linked to make IDE debugging easier
+# GMSL main, statically linked to make IDE debugging easier
 #=============
 
-add_executable(gscam_main
+add_executable(gmsl_main
   src/gscam_main.cpp
-  ${GSCAM_NODE_SOURCES})
+  ${GMSL_NODE_SOURCES})
 
-ament_target_dependencies(gscam_main
-  ${GSCAM_NODE_DEPS})
+ament_target_dependencies(gmsl_main
+  ${GMSL_NODE_DEPS})
 
 #=============
 # Manual composition of camera and subscriber nodes, IPC=true
@@ -121,7 +121,7 @@ add_executable(
 )
 target_link_libraries(
   ipc_test_main
-  gscam_node
+  gmsl_node
   subscriber_node
 )
 ament_target_dependencies(
@@ -142,10 +142,10 @@ if(BUILD_TESTING)
   ament_add_gtest(
     smoke_test
     test/smoke_test.cpp
-    ENV GSCAM_CONFIG="v4l2src device=/dev/video0 ! videoscale ! video/x-raw,width=800,height=600 ! videoconvert"
+    ENV GST_CONFIG="v4l2src device=/dev/video0 ! videoscale ! video/x-raw,width=800,height=600 ! videoconvert"
   )
   if(TARGET smoke_test)
-    target_link_libraries(smoke_test gscam_node)
+    target_link_libraries(smoke_test gmsl_node)
   endif()
 endif()
 
@@ -158,9 +158,9 @@ ament_export_dependencies(class_loader)
 
 ament_export_include_directories(include)
 
-ament_export_targets(export_gscam_node export_subscriber_node)
+ament_export_targets(export_gmsl_node export_subscriber_node)
 
-ament_export_libraries(gscam_node subscriber_node)
+ament_export_libraries(gmsl_node subscriber_node)
 
 ament_package()
 
@@ -168,11 +168,11 @@ ament_package()
 # Install
 #=============
 
-install(DIRECTORY include/${PROJECT_NAME} DESTINATION include)
+install(DIRECTORY include/gscam2 DESTINATION include)
 
 install(
-  TARGETS gscam_node
-  EXPORT export_gscam_node
+  TARGETS gmsl_node
+  EXPORT export_gmsl_node
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
@@ -187,7 +187,7 @@ install(
 )
 
 install(
-  TARGETS gscam_main ipc_test_main
+  TARGETS gmsl_main ipc_test_main
   DESTINATION lib/${PROJECT_NAME}
 )
 
