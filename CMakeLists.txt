@@ -16,16 +16,6 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
-# Emulate Colcon in CLion
-if($ENV{CLION_IDE})
-  message(STATUS "Running inside CLion")
-  find_package(fastrtps_cmake_module REQUIRED)
-  set(FastRTPS_INCLUDE_DIR "/opt/ros/foxy/include")
-  set(FastRTPS_LIBRARY_RELEASE "/opt/ros/foxy/lib/libfastrtps.so")
-  set(ros2_shared_DIR "${PROJECT_SOURCE_DIR}/../../../install/ros2_shared/share/ros2_shared/cmake")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DRUN_INSIDE_CLION")
-endif()
-
 # Gstreamer doesn't provide CMake files
 find_package(PkgConfig)
 pkg_check_modules(GSTREAMER REQUIRED gstreamer-1.0)
@@ -38,7 +28,7 @@ find_package(class_loader REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(rclpy REQUIRED)
-find_package(ros2_shared REQUIRED)
+# find_package(ros2_shared REQUIRED)
 find_package(sensor_msgs REQUIRED)
 
 include_directories(include)
@@ -60,7 +50,7 @@ set(GMSL_NODE_DEPS
   GST_APP
   rclcpp
   rclcpp_components
-  ros2_shared
+  # ros2_shared
   sensor_msgs)
 
 add_library(gmsl_node SHARED
