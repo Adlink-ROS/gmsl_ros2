@@ -1,4 +1,5 @@
-# gmsl_ros2
+# ADLINK GMSL ROS 2 Camera Driver
+
 A ROS 2 Wrapper for GMSL camera
 
 # Build
