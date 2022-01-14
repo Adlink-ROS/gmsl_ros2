@@ -28,7 +28,10 @@ def generate_launch_description():
         name=node_name,
         namespace=namespace,
         parameters=[{
-            'gst_config': (['v4l2src device=', camera_dev, ' ! videoconvert']),
+                # GMSL:
+                'gst_config': (['v4l2src device=', camera_dev, ' ! video/x-raw,format=(string)UYVY,framerate=30/1,width=1280,height=720 ! videoconvert ! video/x-raw, format=(string)BGR ! videoconvert']),
+                # webcam:
+                # 'gst_config': (['v4l2src device=', camera_dev, ' ! videoconvert']),
                     'preroll': False,
                     'use_gst_timestamps': False,
                     'frame_id': frame_id,

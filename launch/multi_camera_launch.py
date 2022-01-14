@@ -49,7 +49,7 @@ def generate_launch_description():
                 'frame_id' :'gmsl_camera_frame1',
                 'camera_name' : 'gmsl_camera1',
                 'camera_config' : 'file://' + os.path.join(get_package_share_directory('gmsl_ros2'), 'cfg', 'calibration_param_example.yaml'),
-                'camera_dev' : '/dev/video2',
+                'camera_dev' : '/dev/video1',
                 'open_rviz' : 'false',
                 'publish_tf': 'false',
             }.items()

@@ -31,7 +31,10 @@ def generate_launch_description():
                 plugin='gscam2::GSCamNode',
                 namespace='camera0',
                 parameters=[{
-                    'gst_config': 'v4l2src device=/dev/video0 ! videoconvert',
+                    # GMSL:
+                    'gst_config': 'v4l2src device=/dev/video0 ! video/x-raw,format=(string)UYVY,framerate=30/1,width=1280,height=720 ! videoconvert ! video/x-raw, format=(string)BGR ! videoconvert',
+                    # webcam:
+                    # 'gst_config': 'v4l2src device=/dev/video0 ! videoconvert',
                     'preroll': False,
                     'use_gst_timestamps': False,
                     'frame_id': 'gmsl_camera_frame0',
@@ -47,7 +50,10 @@ def generate_launch_description():
                 plugin='gscam2::GSCamNode',
                 namespace='camera1',
                 parameters=[{
-                    'gst_config': 'v4l2src device=/dev/video2 ! videoconvert',
+                    # GMSL:
+                    'gst_config': 'v4l2src device=/dev/video1 ! video/x-raw,format=(string)UYVY,framerate=30/1,width=1280,height=720 ! videoconvert ! video/x-raw, format=(string)BGR ! videoconvert',
+                    # webcam:
+                    # 'gst_config': 'v4l2src device=/dev/video2 ! videoconvert',
                     'preroll': False,
                     'use_gst_timestamps': False,
                     'frame_id': 'gmsl_camera_frame1',
