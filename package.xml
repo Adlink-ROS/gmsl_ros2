@@ -34,10 +34,10 @@
     -->
 
     <test_depend>ament_cmake_cppcheck</test_depend>
-    <test_depend>ament_cmake_flake8</test_depend>
+    <!-- <test_depend>ament_cmake_flake8</test_depend> -->
     <test_depend>ament_cmake_lint_cmake</test_depend>
     <test_depend>ament_cmake_pep257</test_depend>
-    <test_depend>ament_cmake_uncrustify</test_depend>
+    <!-- <test_depend>ament_cmake_uncrustify</test_depend> -->
     <test_depend>ament_cmake_xmllint</test_depend>
 
     <depend>camera_calibration_parsers</depend>
@@ -49,7 +49,6 @@
     <depend>rclcpp</depend>
     <depend>rclcpp_components</depend>
     <depend>rclpy</depend>
-    <!-- <depend>ros2_shared</depend> -->
     <depend>sensor_msgs</depend>
 
     <export>

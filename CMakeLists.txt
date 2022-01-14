@@ -28,7 +28,6 @@ find_package(class_loader REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(rclpy REQUIRED)
-# find_package(ros2_shared REQUIRED)
 find_package(sensor_msgs REQUIRED)
 
 include_directories(include)
@@ -50,7 +49,6 @@ set(GMSL_NODE_DEPS
   GST_APP
   rclcpp
   rclcpp_components
-  # ros2_shared
   sensor_msgs)
 
 add_library(gmsl_node SHARED
