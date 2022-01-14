@@ -9,6 +9,7 @@ from launch.conditions import IfCondition
 from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
 
+
 def generate_launch_description():
 
     # Set parameters
@@ -26,40 +27,34 @@ def generate_launch_description():
         output='screen',
         name=node_name,
         namespace=namespace,
-        parameters=[
-                    {
-                        'gst_config': (['v4l2src device=', camera_dev, ' ! videoconvert']),
-                        'preroll': False,
-                        'use_gst_timestamps': False,
-                        'frame_id': frame_id,
-                        'camera_name': camera_name,
-                        'camera_info_url': camera_config,  # Camera calibration information
-                    },
-        ],
+        parameters=[{
+            'gst_config': (['v4l2src device=', camera_dev, ' ! videoconvert']),
+                    'preroll': False,
+                    'use_gst_timestamps': False,
+                    'frame_id': frame_id,
+                    'camera_name': camera_name,
+                    'camera_info_url': camera_config,  # Camera calibration information
+                    }],
     )
 
     # TF publisher
-    tf_arg = DeclareLaunchArgument(
-            'publish_tf',
-            default_value='true',
-            description='Publish TF?')
-    tf_pub_node = Node(package = "tf2_ros",
-                executable = "static_transform_publisher",
-                arguments = ["0", "0", "0.3", "0", "0", "0", "map", frame_id],
-                condition=IfCondition(LaunchConfiguration("publish_tf"))
-                )
+    publish_tf = LaunchConfiguration('publish_tf', default='true')
+    tf_pub_node = Node(package="tf2_ros",
+                       executable="static_transform_publisher",
+                       arguments=["0", "0", "0.3", "0",
+                                  "0", "0", "map", frame_id],
+                       condition=IfCondition(publish_tf)
+                       )
 
     # Rviz2
-    rviz_arg = DeclareLaunchArgument(
-            'open_rviz',
-            default_value='false',
-            description='Launch Rviz?')
+    open_rviz = LaunchConfiguration('open_rviz', default='false')
     rviz_node = Node(
-            package='rviz2',
-            executable='rviz2',
-            name='rviz2',
-            arguments=['-d', os.path.join(get_package_share_directory('gmsl_ros2'), 'rviz', 'image_view.rviz')],
-            condition=IfCondition(LaunchConfiguration("open_rviz"))
-            )
+        package='rviz2',
+        executable='rviz2',
+        name='rviz2',
+        arguments=[
+            '-d', os.path.join(get_package_share_directory('gmsl_ros2'), 'rviz', 'image_view.rviz')],
+        condition=IfCondition(open_rviz)
+    )
 
-    return LaunchDescription([camera_node, tf_arg, tf_pub_node, rviz_arg, rviz_node])
+    return LaunchDescription([camera_node, tf_pub_node, rviz_node])

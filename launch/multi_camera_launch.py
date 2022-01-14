@@ -15,20 +15,31 @@ from launch.launch_description_sources import PythonLaunchDescriptionSource
 def generate_launch_description():
 
     # Rviz2, these codes should be placed before camera nodes
-    rviz_arg = DeclareLaunchArgument(
-            'open_rviz',
-            default_value='false',
-            description='Launch Rviz?')
+    open_rviz = LaunchConfiguration('open_rviz', default='false')
     rviz_node = Node(
             package='rviz2',
             executable='rviz2',
             name='rviz2',
             arguments=['-d', os.path.join(get_package_share_directory('gmsl_ros2'), 'rviz', 'multi_camera.rviz')],
-            condition=IfCondition(LaunchConfiguration("open_rviz"))
+            condition=IfCondition(open_rviz)
             )
 
     # Camera nodes
     camera_group_node = GroupAction([
+        # Camera 0
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource([ThisLaunchFileDir(), '/gmsl_launch.py']),
+            launch_arguments = {
+                'namespace': 'camera0',
+                'node_name': 'gmsl_camera_node0',
+                'frame_id' :'gmsl_camera_frame0',
+                'camera_name' : 'gmsl_camera0',
+                'camera_config' : 'file://' + os.path.join(get_package_share_directory('gmsl_ros2'), 'cfg', 'calibration_param_example.yaml'),
+                'camera_dev' : '/dev/video0',
+                'open_rviz' : 'false',
+                'publish_tf': 'false',
+            }.items()
+        ),
         # Camera 1
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource([ThisLaunchFileDir(), '/gmsl_launch.py']),
@@ -37,20 +48,6 @@ def generate_launch_description():
                 'node_name': 'gmsl_camera_node1',
                 'frame_id' :'gmsl_camera_frame1',
                 'camera_name' : 'gmsl_camera1',
-                'camera_config' : 'file://' + os.path.join(get_package_share_directory('gmsl_ros2'), 'cfg', 'calibration_param_example.yaml'),
-                'camera_dev' : '/dev/video0',
-                'open_rviz' : 'false',
-                'publish_tf': 'false',
-            }.items()
-        ),
-        # Camera 2
-        IncludeLaunchDescription(
-            PythonLaunchDescriptionSource([ThisLaunchFileDir(), '/gmsl_launch.py']),
-            launch_arguments = {
-                'namespace': 'camera2',
-                'node_name': 'gmsl_camera_node2',
-                'frame_id' :'gmsl_camera_frame2',
-                'camera_name' : 'gmsl_camera2',
                 'camera_config' : 'file://' + os.path.join(get_package_share_directory('gmsl_ros2'), 'cfg', 'calibration_param_example.yaml'),
                 'camera_dev' : '/dev/video2',
                 'open_rviz' : 'false',
@@ -62,15 +59,15 @@ def generate_launch_description():
     # TF publisher
     tf_pub_group_node = GroupAction([
         Node(package = "tf2_ros",
+            name = "tf_publisher0",
+            executable = "static_transform_publisher",
+            arguments = ["0", "0", "0.3", "0", "0", "0", "map", "gmsl_camera_frame0"],
+        ),
+        Node(package = "tf2_ros",
             name = "tf_publisher1",
             executable = "static_transform_publisher",
             arguments = ["0", "0", "0.3", "0", "0", "0", "map", "gmsl_camera_frame1"],
         ),
-        Node(package = "tf2_ros",
-            name = "tf_publisher2",
-            executable = "static_transform_publisher",
-            arguments = ["0", "0", "0.3", "0", "0", "0", "map", "gmsl_camera_frame2"],
-        ),
     ])
 
-    return LaunchDescription([rviz_arg, rviz_node, camera_group_node, tf_pub_group_node])
+    return LaunchDescription([rviz_node, camera_group_node, tf_pub_group_node])

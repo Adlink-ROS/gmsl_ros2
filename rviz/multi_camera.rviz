@@ -50,9 +50,9 @@ Visualization Manager:
       Frame Timeout: 15
       Frames:
         All Enabled: false
-        gmsl_camera_frame1:
+        gmsl_camera_frame0:
           Value: true
-        gmsl_camera_frame2:
+        gmsl_camera_frame1:
           Value: true
         map:
           Value: true
@@ -63,9 +63,9 @@ Visualization Manager:
       Show Names: true
       Tree:
         map:
-          gmsl_camera_frame1:
+          gmsl_camera_frame0:
             {}
-          gmsl_camera_frame2:
+          gmsl_camera_frame1:
             {}
       Update Interval: 0
       Value: true
@@ -81,7 +81,7 @@ Visualization Manager:
         Durability Policy: Volatile
         History Policy: Keep Last
         Reliability Policy: Reliable
-        Value: /camera1/image_raw
+        Value: /camera0/image_raw
       Value: true
     - Class: rviz_default_plugins/Image
       Enabled: true
@@ -95,7 +95,7 @@ Visualization Manager:
         Durability Policy: Volatile
         History Policy: Keep Last
         Reliability Policy: Reliable
-        Value: /camera2/image_raw
+        Value: /camera1/image_raw
       Value: true
   Enabled: true
   Global Options:

@@ -23,6 +23,9 @@ camera_config = 'file://' + os.path.join(get_package_share_directory('gmsl_ros2'
 
 def generate_launch_description():
 
+    camera_dev = LaunchConfiguration('camera_dev', default='/dev/video0')
+    open_rviz = LaunchConfiguration('open_rviz', default='false')
+
     container = ComposableNodeContainer(
         name='camera_container',
         namespace='',
@@ -36,7 +39,7 @@ def generate_launch_description():
                 namespace=namespace,
                 parameters=[
                     {
-                        'gst_config': 'v4l2src device=/dev/video0 ! videoconvert',
+                        'gst_config': (['v4l2src device=', camera_dev, ' ! videoconvert']),
                         'preroll': False,
                         'use_gst_timestamps': False,
                         'frame_id': frame_id,
@@ -63,17 +66,12 @@ def generate_launch_description():
                 arguments = ["0", "0", "0.3", "0", "0", "0", "map", frame_id])
 
     # Rviz2
-    rviz_arg = DeclareLaunchArgument(
-            'open_rviz',
-            default_value='false',
-            description='Launch Rviz?')
-
     rviz_node = Node(
             package='rviz2',
             executable='rviz2',
             name='rviz2',
             arguments=['-d', os.path.join(get_package_share_directory('gmsl_ros2'), 'rviz', 'image_view.rviz')],
-            condition=IfCondition(LaunchConfiguration("open_rviz"))
+            condition=IfCondition(open_rviz)
             )
 
-    return LaunchDescription([container, tf_pub_node, rviz_arg, rviz_node])
+    return LaunchDescription([container, tf_pub_node, rviz_node])

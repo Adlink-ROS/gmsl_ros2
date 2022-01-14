@@ -29,13 +29,13 @@ def generate_launch_description():
             ComposableNode(
                 package='gmsl_ros2',
                 plugin='gscam2::GSCamNode',
-                namespace='camera1',
+                namespace='camera0',
                 parameters=[{
                     'gst_config': 'v4l2src device=/dev/video0 ! videoconvert',
                     'preroll': False,
                     'use_gst_timestamps': False,
-                    'frame_id': 'gmsl_camera_frame1',
-                    'camera_name': 'gmsl_camera1',
+                    'frame_id': 'gmsl_camera_frame0',
+                    'camera_name': 'gmsl_camera0',
                     'camera_info_url': 'file://' + os.path.join(get_package_share_directory('gmsl_ros2'), 'cfg', 'calibration_param_example.yaml'),  # Camera calibration information
                 }],
                 extra_arguments=[{
@@ -45,13 +45,13 @@ def generate_launch_description():
             ComposableNode(
                 package='gmsl_ros2',
                 plugin='gscam2::GSCamNode',
-                namespace='camera2',
+                namespace='camera1',
                 parameters=[{
                     'gst_config': 'v4l2src device=/dev/video2 ! videoconvert',
                     'preroll': False,
                     'use_gst_timestamps': False,
-                    'frame_id': 'gmsl_camera_frame2',
-                    'camera_name': 'gmsl_camera2',
+                    'frame_id': 'gmsl_camera_frame1',
+                    'camera_name': 'gmsl_camera1',
                     'camera_info_url': 'file://' + os.path.join(get_package_share_directory('gmsl_ros2'), 'cfg', 'calibration_param_example.yaml'),  # Camera calibration information
                 }],
                 extra_arguments=[{
@@ -64,8 +64,7 @@ def generate_launch_description():
     # Composable image displayer nodes
     show_image = DeclareLaunchArgument(
         'show_image',
-        default_value='false',
-        description='Launch Rviz?'
+        default_value='false'
     )
     image_displayers = LoadComposableNodes(
         target_container='camera_container',
@@ -74,8 +73,8 @@ def generate_launch_description():
             ComposableNode(
                 package='image_view',
                 plugin='image_view::ImageViewNode',
-                name='receiver1',
-                remappings=[('/image', '/camera1/image_raw')],
+                name='receiver0',
+                remappings=[('/image', '/camera0/image_raw')],
                 extra_arguments=[{
                     'use_intra_process_comms': True,
                 }],
@@ -83,8 +82,8 @@ def generate_launch_description():
             ComposableNode(
                 package='image_tools',
                 plugin='image_tools::ShowImage',
-                name='receiver2',
-                remappings=[('/image', '/camera2/image_raw')],
+                name='receiver1',
+                remappings=[('/image', '/camera1/image_raw')],
                 extra_arguments=[{
                     'use_intra_process_comms': False,
                 }],
@@ -95,29 +94,25 @@ def generate_launch_description():
     # TF publisher
     tf_pub_group_node = GroupAction([
         Node(package = "tf2_ros",
+            name = "tf_publisher0",
+            executable = "static_transform_publisher",
+            arguments = ["0", "0", "0.3", "0", "0", "0", "map", "gmsl_camera_frame0"],
+        ),
+        Node(package = "tf2_ros",
             name = "tf_publisher1",
             executable = "static_transform_publisher",
             arguments = ["0", "0", "0.3", "0", "0", "0", "map", "gmsl_camera_frame1"],
         ),
-        Node(package = "tf2_ros",
-            name = "tf_publisher2",
-            executable = "static_transform_publisher",
-            arguments = ["0", "0", "0.3", "0", "0", "0", "map", "gmsl_camera_frame2"],
-        ),
     ])
 
     # Rviz2
-    rviz_arg = DeclareLaunchArgument(
-        'open_rviz',
-        default_value='false',
-        description='Launch Rviz?'
-    )
+    open_rviz = LaunchConfiguration('open_rviz', default='false')
     rviz_node = Node(
         package='rviz2',
         executable='rviz2',
         name='rviz2',
         arguments=['-d', os.path.join(get_package_share_directory('gmsl_ros2'), 'rviz', 'multi_camera.rviz')],
-        condition=IfCondition(LaunchConfiguration("open_rviz"))
+        condition=IfCondition(open_rviz)
     )
 
-    return LaunchDescription([container, camera_nodes, tf_pub_group_node, show_image, image_displayers, rviz_arg, rviz_node])
+    return LaunchDescription([container, camera_nodes, tf_pub_group_node, show_image, image_displayers, rviz_node])
