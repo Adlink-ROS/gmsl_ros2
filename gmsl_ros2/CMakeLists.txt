@@ -115,19 +115,19 @@ ament_target_dependencies(gmsl_main
 # Manual composition of camera and subscriber nodes, IPC=true
 #=============
 
-add_executable(
-  ipc_test_main
-  src/ipc_test_main.cpp
-)
-target_link_libraries(
-  ipc_test_main
-  gmsl_node
-  subscriber_node
-)
-ament_target_dependencies(
-  ipc_test_main
-  rclcpp
-)
+# add_executable(
+#   ipc_test_main
+#   src/ipc_test_main.cpp
+# )
+# target_link_libraries(
+#   ipc_test_main
+#   gmsl_node
+#   subscriber_node
+# )
+# ament_target_dependencies(
+#   ipc_test_main
+#   rclcpp
+# )
 
 #=============
 # Test
@@ -187,7 +187,9 @@ install(
 )
 
 install(
-  TARGETS gmsl_main ipc_test_main
+  TARGETS
+  gmsl_main
+  # ipc_test_main
   DESTINATION lib/${PROJECT_NAME}
 )
 
