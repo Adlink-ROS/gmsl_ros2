@@ -4,9 +4,8 @@ import os
 
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument
 from launch.conditions import IfCondition
-from launch.substitutions import LaunchConfiguration
+from launch.substitutions import LaunchConfiguration, PythonExpression
 from launch_ros.actions import Node
 
 
@@ -19,25 +18,60 @@ def generate_launch_description():
     camera_name = LaunchConfiguration('camera_name', default='gmsl_camera')
     camera_config = LaunchConfiguration('camera_config', default='file://' + os.path.join(get_package_share_directory('gmsl_ros2'), 'cfg', 'calibration_param_example.yaml'))
     camera_dev = LaunchConfiguration('camera_dev', default='/dev/video0')
+    camera_type = LaunchConfiguration('camera_type', default='argus')
 
-    # Camera node
-    camera_node = Node(
+    # v4l2 camera node
+    v4l2_camera_node = Node(
         package='gmsl_ros2',
         executable='gmsl_main',
         output='screen',
         name=node_name,
         namespace=namespace,
         parameters=[{
-                # GMSL:
-                'gst_config': (['v4l2src device=', camera_dev, ' ! video/x-raw,format=(string)UYVY,framerate=30/1,width=1280,height=720 ! videoconvert ! video/x-raw, format=(string)BGR ! videoconvert']),
-                # webcam:
-                # 'gst_config': (['v4l2src device=', camera_dev, ' ! videoconvert']),
+                    'gst_config': (['v4l2src device=', camera_dev, ' ! video/x-raw,format=(string)UYVY,framerate=30/1,width=1280,height=720 ! videoconvert ! video/x-raw, format=(string)BGR ! videoconvert']),
                     'preroll': False,
                     'use_gst_timestamps': False,
                     'frame_id': frame_id,
                     'camera_name': camera_name,
                     'camera_info_url': camera_config,  # Camera calibration information
-                    }],
+                   }],
+        condition=IfCondition(PythonExpression(['"', camera_type, '" == "v4l2"'])),
+    )
+
+    # webcam camera node
+    webcam_camera_node = Node(
+        package='gmsl_ros2',
+        executable='gmsl_main',
+        output='screen',
+        name=node_name,
+        namespace=namespace,
+        parameters=[{
+                    'gst_config': (['v4l2src device=', camera_dev, ' ! videoconvert']),
+                    'preroll': False,
+                    'use_gst_timestamps': False,
+                    'frame_id': frame_id,
+                    'camera_name': camera_name,
+                    'camera_info_url': camera_config,  # Camera calibration information
+                   }],
+        condition=IfCondition(PythonExpression(['"', camera_type, '" == "webcam"'])),
+    )
+
+    # argus camera node
+    argus_camera_node = Node(
+        package='gmsl_ros2',
+        executable='gmsl_main',
+        output='screen',
+        name=node_name,
+        namespace=namespace,
+        parameters=[{
+                    'gst_config': (['nvarguscamerasrc sensor-id=', camera_dev, ' ! video/x-raw(memory:NVMM), width=2048, height=1280, framerate=30/1 ! nvvidconv flip-method=0 ! video/x-raw, format=(string)I420 ! videoconvert']),
+                    'preroll': False,
+                    'use_gst_timestamps': False,
+                    'frame_id': frame_id,
+                    'camera_name': camera_name,
+                    'camera_info_url': camera_config,  # Camera calibration information
+                   }],
+        condition=IfCondition(PythonExpression(['"', camera_type, '" == "argus"'])),
     )
 
     # TF publisher
@@ -60,4 +94,8 @@ def generate_launch_description():
         condition=IfCondition(open_rviz)
     )
 
-    return LaunchDescription([camera_node, tf_pub_node, rviz_node])
+    return LaunchDescription([v4l2_camera_node, 
+                              webcam_camera_node,
+                              argus_camera_node,
+                              tf_pub_node,
+                              rviz_node])
