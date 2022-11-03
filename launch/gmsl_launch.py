@@ -19,6 +19,11 @@ def generate_launch_description():
     camera_config = LaunchConfiguration('camera_config', default='file://' + os.path.join(get_package_share_directory('gmsl_ros2'), 'cfg', 'calibration_param_example.yaml'))
     camera_dev = LaunchConfiguration('camera_dev', default='/dev/video0')
     camera_type = LaunchConfiguration('camera_type', default='argus')
+    width = LaunchConfiguration('width', default='2048')
+    height = LaunchConfiguration('height', default='1280')
+    # width = LaunchConfiguration('width', default='640')
+    # height = LaunchConfiguration('height', default='480')    
+    index = LaunchConfiguration('index', default='0')
 
     # v4l2 camera node
     v4l2_camera_node = Node(
@@ -28,7 +33,7 @@ def generate_launch_description():
         name=node_name,
         namespace=namespace,
         parameters=[{
-                    'gst_config': (['v4l2src device=', camera_dev, ' ! video/x-raw,format=(string)UYVY,framerate=30/1,width=1280,height=720 ! videoconvert ! video/x-raw, format=(string)BGR ! videoconvert']),
+                    'gst_config': (['v4l2src device=', camera_dev, ' ! video/x-raw,format=(string)UYVY,framerate=30/1,width=', width,',height=', height,' ! videoconvert ! video/x-raw, format=(string)BGR ! videoconvert']),
                     'preroll': False,
                     'use_gst_timestamps': False,
                     'frame_id': frame_id,
@@ -64,7 +69,7 @@ def generate_launch_description():
         name=node_name,
         namespace=namespace,
         parameters=[{
-                    'gst_config': (['nvarguscamerasrc sensor-id=', camera_dev, ' ! video/x-raw(memory:NVMM), width=2048, height=1280, framerate=30/1 ! nvvidconv flip-method=0 ! video/x-raw, format=(string)I420 ! videoconvert']),
+                    'gst_config': (['nvarguscamerasrc sensor-id=', index, ' ! video/x-raw(memory:NVMM), format=NV12, width=', width,', height=', height,', framerate=30/1 ! nvvidconv flip-method=0 ! video/x-raw, format=(string)UYVY ! videoconvert']),
                     'preroll': False,
                     'use_gst_timestamps': False,
                     'frame_id': frame_id,
