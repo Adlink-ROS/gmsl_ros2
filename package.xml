@@ -50,6 +50,7 @@
     <depend>rclcpp_components</depend>
     <depend>rclpy</depend>
     <depend>sensor_msgs</depend>
+    <depend>image_proc</depend>
 
     <export>
         <build_type>ament_cmake</build_type>

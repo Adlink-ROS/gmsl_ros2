@@ -32,7 +32,7 @@ def generate_launch_description():
             package='rviz2',
             executable='rviz2',
             name='rviz2',
-            arguments=['-d', os.path.join(get_package_share_directory('gmsl_ros2'), 'rviz', 'multi_camera.rviz')],
+            arguments=['-d', os.path.join(get_package_share_directory('gmsl_ros2'), 'rviz', 'multi_camera_rectification.rviz')],
             condition=IfCondition(open_rviz)
             )
     )
@@ -44,7 +44,7 @@ def generate_launch_description():
                 period=2.0*int(f'{i}'), # delay 2 seconds between each cameras
                 actions=[
                     IncludeLaunchDescription(
-                        PythonLaunchDescriptionSource([ThisLaunchFileDir(), '/gmsl_launch.py']),
+                        PythonLaunchDescriptionSource([ThisLaunchFileDir(), '/gmsl_rectification_launch.py']),
                         launch_arguments = {
                             'index' : f'{i}',
                             'namespace': f'camera{i}',

@@ -1,0 +1,20 @@
+image_width: 2048
+image_height: 1280
+camera_name: gmsl_camera
+camera_matrix:
+  rows: 3
+  cols: 3
+  data: [1000.296173, 0, 998.388323, 0, 1000.182482, 655.425669, 0, 0, 1]
+distortion_model: plumb_bob
+distortion_coefficients:
+  rows: 1
+  cols: 5
+  data: [-0.263997, 0.044422, -0.002038, 0.001122, 0]
+rectification_matrix:
+  rows: 3
+  cols: 3
+  data: [1, 0, 0, 0, 1, 0, 0, 0, 1]
+projection_matrix:
+  rows: 3
+  cols: 4
+  data: [643.686096, 0, 1019.052583, 0, 0, 870.44873, 656.554105, 0, 0, 0, 1, 0]

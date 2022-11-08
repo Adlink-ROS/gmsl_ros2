@@ -5,7 +5,7 @@ import os
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.conditions import IfCondition
-from launch.substitutions import LaunchConfiguration, PythonExpression
+from launch.substitutions import LaunchConfiguration, PythonExpression, TextSubstitution
 from launch_ros.actions import Node
 
 
@@ -16,13 +16,23 @@ def generate_launch_description():
     node_name = LaunchConfiguration('node_name', default='gmsl_camera_node')
     frame_id = LaunchConfiguration('frame_id', default='gmsl_camera_frame')
     camera_name = LaunchConfiguration('camera_name', default='gmsl_camera')
-    camera_config = LaunchConfiguration('camera_config', default='file://' + os.path.join(get_package_share_directory('gmsl_ros2'), 'cfg', 'calibration_param_example.yaml'))
+
+    # width = LaunchConfiguration('width', default='2048')
+    # height = LaunchConfiguration('height', default='1280')
+    width = LaunchConfiguration('width', default='1280')
+    height = LaunchConfiguration('height', default='720')
+    # width = LaunchConfiguration('width', default='640')
+    # height = LaunchConfiguration('height', default='480')
+    camera_config = LaunchConfiguration('camera_config', default=[
+            TextSubstitution(text='file://' + os.path.join(get_package_share_directory('gmsl_ros2'), 'cfg', '')),
+            TextSubstitution(text='calibration_param_example_'),
+            width,
+            TextSubstitution(text='x'),
+            height,
+            TextSubstitution(text='.yaml')])
+
     camera_dev = LaunchConfiguration('camera_dev', default='/dev/video0')
     camera_type = LaunchConfiguration('camera_type', default='argus')
-    width = LaunchConfiguration('width', default='2048')
-    height = LaunchConfiguration('height', default='1280')
-    # width = LaunchConfiguration('width', default='640')
-    # height = LaunchConfiguration('height', default='480')    
     index = LaunchConfiguration('index', default='0')
 
     # v4l2 camera node
